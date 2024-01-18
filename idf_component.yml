@@ -1,4 +1,5 @@
 version: "0.0.1"
 description: Liquid Crystal
+url: https://github.com/leandroCv-25/LiquidCrystal
 dependencies:
   idf: ">=4.4"
