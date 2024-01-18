@@ -58,20 +58,20 @@ extern "C"
         uint8_t _data_pins[8]; // GPIO Connected on data pins
     } liquid_crystal_connection_t;
 
-    typedef struct liquid_crystal_t
+    typedef struct 
     {
         liquid_crystal_connection_t liquid_crystal_connection;
-        liquid_crystal_kind_connection_t liquid_crystal_kind_connection = LIQUID_CRYSTAL_FOUR_BITs;
+        liquid_crystal_kind_connection_t liquid_crystal_kind_connection;
         uint8_t cols;
         uint8_t rows;
-        uint8_t charsize = LCD_5x8DOTS;
+        uint8_t charsize;
         uint8_t _displayfunction;
         uint8_t _displaycontrol;
         uint8_t _displaymode;
         uint8_t _row_offsets[4];
-    };
+    } liquid_crystal_t;
 
-    esp_err init(liquid_crystal_t *liquid_crystal);
+    esp_err_t init(liquid_crystal_t *liquid_crystal);
 
     void clear(liquid_crystal_t *liquid_crystal);
     void home(liquid_crystal_t *liquid_crystal);
