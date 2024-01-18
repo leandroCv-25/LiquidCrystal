@@ -71,23 +71,23 @@ extern "C"
         uint8_t _row_offsets[4];
     } liquid_crystal_t;
 
-    esp_err_t init(liquid_crystal_t *liquid_crystal);
+    esp_err_t liquid_crystal_init(liquid_crystal_t *liquid_crystal);
 
-    void clear(liquid_crystal_t *liquid_crystal);
-    void home(liquid_crystal_t *liquid_crystal);
-    void no_display(liquid_crystal_t *liquid_crystal);
-    void display(liquid_crystal_t *liquid_crystal);
-    void no_blink(liquid_crystal_t *liquid_crystal);
-    void blink(liquid_crystal_t *liquid_crystal);
-    void no_cursor(liquid_crystal_t *liquid_crystal);
-    void cursor(liquid_crystal_t *liquid_crystal);
-    void scroll_display_left(liquid_crystal_t *liquid_crystal);
-    void scroll_display_right(liquid_crystal_t *liquid_crystal);
-    void left_to_right(liquid_crystal_t *liquid_crystal);
-    void right_to_left(liquid_crystal_t *liquid_crystal);
-    void autoscroll(liquid_crystal_t *liquid_crystal);
-    void no_auto_scroll(liquid_crystal_t *liquid_crystal);
-    void print(liquid_crystal_t *liquid_crystal, const char str[]);
+    void liquid_crystal_clear(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_home(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_no_display(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_display(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_no_blink(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_blink(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_no_cursor(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_cursor(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_scroll_display_left(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_scroll_display_right(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_left_to_right(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_right_to_left(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_autoscroll(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_no_auto_scroll(liquid_crystal_t *liquid_crystal);
+    void liquid_crystal_print(liquid_crystal_t *liquid_crystal, const char str[]);
 
 #ifdef __cplusplus
 }
