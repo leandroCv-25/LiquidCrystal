@@ -1,0 +1,4 @@
+version: "0.0.1"
+description: Liquid Crystal
+dependencies:
+  idf: ">=4.4"
