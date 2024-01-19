@@ -44,7 +44,7 @@ extern "C"
 #define LCD_1LINE 0x00
 #define LCD_5x10DOTS 0x04
 #define LCD_5x8DOTS 0x00
-    
+
     typedef enum
     {
         LIQUID_CRYSTAL_FOUR_BITs,
@@ -58,7 +58,7 @@ extern "C"
         uint8_t _data_pins[8]; // GPIO Connected on data pins
     } liquid_crystal_connection_t;
 
-    typedef struct 
+    typedef struct
     {
         liquid_crystal_connection_t liquid_crystal_connection;
         liquid_crystal_kind_connection_t liquid_crystal_kind_connection;
@@ -87,7 +87,9 @@ extern "C"
     void liquid_crystal_right_to_left(liquid_crystal_t *liquid_crystal);
     void liquid_crystal_autoscroll(liquid_crystal_t *liquid_crystal);
     void liquid_crystal_no_auto_scroll(liquid_crystal_t *liquid_crystal);
-    void liquid_crystal_print(liquid_crystal_t *liquid_crystal, const char str[]);
+    void liquid_crystal_print(liquid_crystal_t *liquid_crystal, char *str);
+
+    void liquid_crystal_set_cursor(liquid_crystal_t *liquid_crystal, uint8_t col, uint8_t row);
 
 #ifdef __cplusplus
 }

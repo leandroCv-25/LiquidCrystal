@@ -45,7 +45,7 @@ void write8bits(liquid_crystal_t *liquid_crystal, uint8_t value)
     pulseEnable(liquid_crystal);
 }
 
-// write either command or data, with automatic 4/8-bit selection
+// write either liquid_crystal_command or data, with automatic 4/8-bit selection
 void send(liquid_crystal_t *liquid_crystal, uint8_t value, uint8_t mode)
 {
     gpio_set_level(liquid_crystal->liquid_crystal_connection.rs, mode);
@@ -62,36 +62,38 @@ void send(liquid_crystal_t *liquid_crystal, uint8_t value, uint8_t mode)
 }
 
 /*********** mid level commands, for sending data/cmds */
-void command(liquid_crystal_t *liquid_crystal, uint8_t value)
+void liquid_crystal_command(liquid_crystal_t *liquid_crystal, uint8_t value)
 {
     send(liquid_crystal, value, 0);
 }
 
-void write(liquid_crystal_t *liquid_crystal, uint8_t value)
+void liquid_crystal_write(liquid_crystal_t *liquid_crystal, uint8_t value)
 {
     send(liquid_crystal, value, 1);
 }
 
 /********** high level commands, for the user! */
-void liquid_crystal_print(liquid_crystal_t *liquid_crystal, const char str[])
+void liquid_crystal_print(liquid_crystal_t *liquid_crystal, char *str)
 {
     for (int i = 0; i < strlen(str); i++)
-        return write(liquid_crystal, str[i]);
+    {
+        liquid_crystal_write(liquid_crystal, str[i]);
+    }
 }
 
 void liquid_crystal_clear(liquid_crystal_t *liquid_crystal)
 {
-    command(liquid_crystal, LCD_CLEARDISPLAY); // clear display, set cursor position to zero
-    vTaskDelay(pdMS_TO_TICKS(2000));           // this command takes a long time!
+    liquid_crystal_command(liquid_crystal, LCD_CLEARDISPLAY); // clear display, set cursor position to zero
+    vTaskDelay(pdMS_TO_TICKS(2000));           // this liquid_crystal_command takes a long time!
 }
 
 void liquid_crystal_home(liquid_crystal_t *liquid_crystal)
 {
-    command(liquid_crystal, LCD_RETURNHOME); // set cursor position to zero
-    vTaskDelay(pdMS_TO_TICKS(2000));         // this command takes a long time!
+    liquid_crystal_command(liquid_crystal, LCD_RETURNHOME); // set cursor position to zero
+    vTaskDelay(pdMS_TO_TICKS(2000));         // this liquid_crystal_command takes a long time!
 }
 
-void liquid_crystal_setCursor(liquid_crystal_t *liquid_crystal, uint8_t col, uint8_t row)
+void liquid_crystal_set_cursor(liquid_crystal_t *liquid_crystal, uint8_t col, uint8_t row)
 {
     const size_t max_lines = sizeof((liquid_crystal->_row_offsets)) / sizeof(*liquid_crystal->_row_offsets);
     if (row >= max_lines)
@@ -103,98 +105,98 @@ void liquid_crystal_setCursor(liquid_crystal_t *liquid_crystal, uint8_t col, uin
         row = liquid_crystal->rows - 1; // we count rows starting w/ 0
     }
 
-    command(liquid_crystal, LCD_SETDDRAMADDR | (col + liquid_crystal->_row_offsets[row]));
+    liquid_crystal_command(liquid_crystal, LCD_SETDDRAMADDR | (col + liquid_crystal->_row_offsets[row]));
 }
 
 // Turn the display on/off (quickly)
-void liquid_crystal_noDisplay(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_no_display(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaycontrol &= ~LCD_DISPLAYON;
-    command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
+    liquid_crystal_command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
 }
 void liquid_crystal_display(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaycontrol |= LCD_DISPLAYON;
-    command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
+    liquid_crystal_command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
 }
 
 // Turns the underline cursor on/off
-void liquid_crystal_noCursor(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_no_cursor(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaycontrol &= ~LCD_CURSORON;
-    command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
+    liquid_crystal_command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
 }
 void liquid_crystal_cursor(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaycontrol |= LCD_CURSORON;
-    command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
+    liquid_crystal_command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
 }
 
 // Turn on and off the blinking cursor
-void liquid_crystal_noBlink(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_no_blink(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaycontrol &= ~LCD_BLINKON;
-    command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
+    liquid_crystal_command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
 }
 void liquid_crystal_blink(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaycontrol |= LCD_BLINKON;
-    command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
+    liquid_crystal_command(liquid_crystal, LCD_DISPLAYCONTROL | liquid_crystal->_displaycontrol);
 }
 
 // These commands scroll the display without changing the RAM
-void liquid_crystal_scrollDisplayLeft(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_scroll_display_left(liquid_crystal_t *liquid_crystal)
 {
-    command(liquid_crystal, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
+    liquid_crystal_command(liquid_crystal, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
 }
 void liquid_crystal_scrollDisplayRight(liquid_crystal_t *liquid_crystal)
 {
-    command(liquid_crystal, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
+    liquid_crystal_command(liquid_crystal, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
 }
 
 // This is for text that flows Left to Right
-void liquid_crystal_leftToRight(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_left_to_right(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaymode |= LCD_ENTRYLEFT;
-    command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
+    liquid_crystal_command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
 }
 
 // This is for text that flows Right to Left
-void liquid_crystal_rightToLeft(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_right_to_left(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaymode &= ~LCD_ENTRYLEFT;
-    command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
+    liquid_crystal_command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
 }
 
 // This will 'right justify' text from the cursor
 void liquid_crystal_autoscroll(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaymode |= LCD_ENTRYSHIFTINCREMENT;
-    command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
+    liquid_crystal_command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
 }
 
 // This will 'left justify' text from the cursor
-void liquid_crystal_noAutoscroll(liquid_crystal_t *liquid_crystal)
+void liquid_crystal_no_autoscroll(liquid_crystal_t *liquid_crystal)
 {
     liquid_crystal->_displaymode &= ~LCD_ENTRYSHIFTINCREMENT;
-    command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
+    liquid_crystal_command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
 }
 
 // Allows us to fill the first 8 CGRAM locations
 // with custom characters
-void liquid_crystal_createChar(liquid_crystal_t *liquid_crystal, uint8_t location, uint8_t charmap[])
+void liquid_crystal_create_char(liquid_crystal_t *liquid_crystal, uint8_t location, uint8_t charmap[])
 {
     location &= 0x7; // we only have 8 locations 0-7
-    command(liquid_crystal, LCD_SETCGRAMADDR | (location << 3));
+    liquid_crystal_command(liquid_crystal, LCD_SETCGRAMADDR | (location << 3));
     for (int i = 0; i < 8; i++)
     {
-        write(liquid_crystal, charmap[i]);
+        liquid_crystal_write(liquid_crystal, charmap[i]);
     }
 }
 
 /************ INIT liquid_crystal **********/
 
-void setRowOffsets(liquid_crystal_t *liquid_crystal, int row0, int row1, int row2, int row3)
+void set_row_offsets(liquid_crystal_t *liquid_crystal, int row0, int row1, int row2, int row3)
 {
     liquid_crystal->_row_offsets[0] = row0;
     liquid_crystal->_row_offsets[1] = row1;
@@ -221,7 +223,7 @@ esp_err_t liquid_crystal_init(liquid_crystal_t *liquid_crystal)
         liquid_crystal->_displayfunction |= LCD_2LINE;
     }
 
-    setRowOffsets(liquid_crystal,0x00, 0x40, 0x00 + liquid_crystal->cols, 0x40 + liquid_crystal->cols);
+    set_row_offsets(liquid_crystal, 0x00, 0x40, 0x00 + liquid_crystal->cols, 0x40 + liquid_crystal->cols);
 
     // for some 1 line displays you can select a 10 pixel high font
     if ((liquid_crystal->charsize != LCD_5x8DOTS) && (liquid_crystal->rows == 1))
@@ -275,20 +277,20 @@ esp_err_t liquid_crystal_init(liquid_crystal_t *liquid_crystal)
         // this is according to the Hitachi HD44780 datasheet
         // page 45 figure 23
 
-        // Send function set command sequence
-        command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
+        // Send function set liquid_crystal_command sequence
+        liquid_crystal_command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
         vTaskDelay(pdMS_TO_TICKS(5)); // wait more than 4.1 ms
 
         // second try
-        command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
+        liquid_crystal_command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
         vTaskDelay(pdMS_TO_TICKS(2));
 
         // third go
-        command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
+        liquid_crystal_command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
     }
 
     // finally, set # lines, font size, etc.
-    command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
+    liquid_crystal_command(liquid_crystal, LCD_FUNCTIONSET | liquid_crystal->_displayfunction);
 
     // turn the display on with no cursor or blinking default
     liquid_crystal->_displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
@@ -300,7 +302,7 @@ esp_err_t liquid_crystal_init(liquid_crystal_t *liquid_crystal)
     // Initialize to default text direction (for romance languages)
     liquid_crystal->_displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
     // set the entry mode
-    command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
+    liquid_crystal_command(liquid_crystal, LCD_ENTRYMODESET | liquid_crystal->_displaymode);
 
     return ESP_OK;
 }
